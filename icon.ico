@@ -1,0 +1,62 @@
+@echo off
+title BP Generator - Build EXE
+echo.
+echo  BP Generator - Building Windows Installer
+echo  JRC Corporate Consulting
+echo.
+
+cd /d "%~dp0"
+
+echo [1/4] Checking Node.js...
+node --version >nul 2>&1
+if errorlevel 1 (
+    echo ERROR: Node.js not found. Download from https://nodejs.org
+    pause & exit /b 1
+)
+node --version
+echo OK
+
+echo.
+echo [2/4] Checking Python...
+python --version >nul 2>&1
+if errorlevel 1 (
+    echo ERROR: Python not found. Download from https://python.org
+    pause & exit /b 1
+)
+python --version
+echo OK
+
+echo.
+echo [3/4] Installing Node dependencies (first time takes 2-3 min)...
+call npm install
+if errorlevel 1 (
+    echo ERROR: npm install failed.
+    pause & exit /b 1
+)
+echo OK
+
+echo.
+echo [4/4] Building Windows .exe installer...
+echo This takes 3-5 minutes, please wait...
+echo.
+call npm run build-exe
+if errorlevel 1 (
+    echo.
+    echo ERROR: Build failed. See error above.
+    pause & exit /b 1
+)
+
+echo.
+echo ====================================================
+echo  BUILD COMPLETE!
+echo.
+echo  Your installer is in the "dist" folder:
+echo  BP Generator Setup.exe
+echo.
+echo  Double-click it to install on any Windows PC.
+echo  No Python or Node required on the target machine.
+echo ====================================================
+echo.
+
+explorer "%~dp0dist"
+pause
